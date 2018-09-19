@@ -1,0 +1,15 @@
+General@op_period@1
+General@op_period_start_time@0400
+General@op_period_end_time@1500
+General@op_period_end_date@7/4/2018
+General@prepared_by@Keith
+General@op_period_start_date@7/4/2018
+General@incident_name@TRT Training
+202 Incident Objectives@objectives@The focus will be personal on-rope skills in the context of technical search.
+ling and ascending a fixed line in the wilderness setting.
+ard rappels and ascents on increasingly steep slope while more experienced members will work on rappelling, searching an area, and then continuing the rappel or ascending.
+k in some pickoffs, simulating the rescue of an injured searcher.
+202 Incident Objectives@situational_awareness@Maintain adequate hydration at all times.
+
+202 Incident Objectives@command_emphasis@Maintain adequate hydration at all times.
+Watch for Posion Oak.
