@@ -4,7 +4,7 @@ import io, sys
 import pdfrw
 import json
 from pprint import pprint
- 
+
 # from reportlab.lib.utils import ImageReader
 # from reportlab.pdfgen.canvas import Canvas
 # from reportlab.pdfbase.ttfonts import TTFont

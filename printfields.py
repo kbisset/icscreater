@@ -4,17 +4,16 @@ import io, sys
 import pdfrw
 import json
 from pprint import pprint
+import poppler
  
-# data - map between data names and value
-# field - map between pdf field names and data names
-# template - pdf to be filled in
-def print_fields(template):
-    print "{"
-    for page in template.Root.Pages.Kids:
+def print_fields(page):
+    print("{")
+    if page.Annots != None:
         for field in page.Annots:
             #print field.T, field.Type, field.Subtype, "T: ", field.T, "V: ", field.V, "AS: ", field.AS
-            print '"' + str(field.T) + '": "",'
-    print "}"
+            if field.T != None:
+                print('"' + str(field.T) + '": "",')
+    print("}")
 
 
 def main(argv):
@@ -22,8 +21,13 @@ def main(argv):
     # template = pdfrw.PdfReader('ics202-0.pdf')
     # print_fields(template)
 
-    template = pdfrw.PdfReader('ics205-0.pdf')
-    print_fields(template)
+    print ("Reading", argv[0])
+    template = pdfrw.PdfReader(argv[0])
+    print("Pages ", template.numPages)
+    #    if template.numpages != None:
+    print_fields(template.Root.Pages.Kids[0])
+    # for page in template.Root.Pages.Kids:
+    #     print_fields(page)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
