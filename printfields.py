@@ -4,7 +4,6 @@ import io, sys
 import pdfrw
 import json
 from pprint import pprint
-import poppler
  
 def print_fields(page):
     print("{")

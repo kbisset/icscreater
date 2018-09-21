@@ -20,18 +20,20 @@ from pprint import pprint
 # data - map between data names and value
 # field - map between pdf field names and data names
 # template - pdf to be filled in
-def create_pdf(data, fields, template):
-    for page in template.Root.Pages.Kids:
-        for field in page.Annots:
-            if field.T in fields and fields[unicode(field.T, "utf-8")] in data:
-                if (field.AS == '/Yes' and data[fields[unicode(field.T, "utf-8")]] != u'Yes'):
-                    field.update(pdfrw.PdfDict(AS='/Off'))
-                    field.update(pdfrw.PdfDict(V=''))
-                    a=1
-                else:
-                    field.update(pdfrw.PdfDict(V=data[fields[unicode(field.T, "utf-8")]]))
-                print field.T, field.Type, field.Subtype, "T: ", field.T, "V: ", field.V, "AS: ", field.AS
-    return template
+def create_pdf(data, fields, page):
+    for field in page.Annots:
+        if field.T in fields and fields[unicode(field.T, "utf-8")] in data:
+            if (field.AS == '/Yes' and data[fields[unicode(field.T, "utf-8")]] != u'Yes'):
+                field.update(pdfrw.PdfDict(AS='/Off'))
+                field.update(pdfrw.PdfDict(V=''))
+                a=1
+            else:
+                field.update(pdfrw.PdfDict(V=data[fields[unicode(field.T, "utf-8")]]))
+            print field.T, field.Type, field.Subtype, "T: ", field.T, "V: ", field.V, "AS: ", field.AS
+        else:
+            print "Not found"
+            pprint(field.T)
+    return page
 
     
     # canv = Canvas('test2.pdf', pagesize=letter)
@@ -45,20 +47,27 @@ def main(argv):
     #pprint(data)
     writer = pdfrw.PdfWriter()
 
+    # TODO: Pass in page number so it can be added automatically
     print "*** 202 start"
-    with open('ics202.json') as data_file:    
+    with open('forms/ics202.json') as data_file:    
         ics202_map = json.load(data_file)
-    template = pdfrw.PdfReader('ics202-0.pdf')
-    ics202 = create_pdf(data, ics202_map, template)
-    writer.addpage(ics202.pages[0])
+    template = pdfrw.PdfReader('forms/ics202-0.pdf')
+    ics202 = create_pdf(data, ics202_map, template.Root.Pages.Kids[0])
+    writer.addpage(ics202)
 
     print "*** 205 start"
-    with open('ics205.json') as data_file:    
+    with open('forms/ics205.json') as data_file:    
         ics205_map = json.load(data_file)
-    template = pdfrw.PdfReader('ics205-0.pdf')
-    ics205 = create_pdf(data, ics205_map, template)
-    writer.addpage(ics205.pages[0])
+    template = pdfrw.PdfReader('forms/ics205-0.pdf')
+    ics205 = create_pdf(data, ics205_map, template.Root.Pages.Kids[0])
+    writer.addpage(ics205)
 
+    print "*** 206 start"
+    with open('forms/ics206.json') as data_file:    
+        ics206_map = json.load(data_file)
+    template = pdfrw.PdfReader('forms/ics206-0.pdf')
+    ics206 = create_pdf(data, ics206_map, template.Root.Pages.Kids[0])
+    writer.addpage(ics206)
 
     writer.write('test2.pdf')
 
