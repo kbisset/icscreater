@@ -22,17 +22,18 @@ from pprint import pprint
 # template - pdf to be filled in
 def create_pdf(data, fields, page):
     for field in page.Annots:
-        if field.T in fields and fields[unicode(field.T, "utf-8")] in data:
-            if (field.AS == '/Yes' and data[fields[unicode(field.T, "utf-8")]] != u'Yes'):
-                field.update(pdfrw.PdfDict(AS='/Off'))
-                field.update(pdfrw.PdfDict(V=''))
-                a=1
+        if field.T != None:
+            if field.T in fields and fields[unicode(field.T, "utf-8")] in data:
+                if (field.AS == '/Yes' and data[fields[unicode(field.T, "utf-8")]] != u'Yes'):
+                    field.update(pdfrw.PdfDict(AS='/Off'))
+                    field.update(pdfrw.PdfDict(V=''))
+                    a=1
+                else:
+                    field.update(pdfrw.PdfDict(V=data[fields[unicode(field.T, "utf-8")]]))
+                    # print field.T, field.Type, field.Subtype, "T: ", field.T, "V: ", field.V, "AS: ", field.AS
             else:
-                field.update(pdfrw.PdfDict(V=data[fields[unicode(field.T, "utf-8")]]))
-            print field.T, field.Type, field.Subtype, "T: ", field.T, "V: ", field.V, "AS: ", field.AS
-        else:
-            print "Not found"
-            pprint(field.T)
+                print "Not found: " + field.T
+                # pprint(field.T)
     return page
 
     
@@ -42,7 +43,7 @@ def create_pdf(data, fields, page):
 #    canv.save()
 
 def main(argv):
-    with open('input.json') as data_file:    
+    with open(argv[0]) as data_file:    
         data = json.load(data_file)
     #pprint(data)
     writer = pdfrw.PdfWriter()
@@ -54,6 +55,13 @@ def main(argv):
     template = pdfrw.PdfReader('forms/ics202-0.pdf')
     ics202 = create_pdf(data, ics202_map, template.Root.Pages.Kids[0])
     writer.addpage(ics202)
+
+    print "*** 203 start"
+    with open('forms/ics203.json') as data_file:    
+        ics203_map = json.load(data_file)
+    template = pdfrw.PdfReader('forms/ics203.pdf')
+    ics203 = create_pdf(data, ics203_map, template.Root.Pages.Kids[0])
+    writer.addpage(ics203)
 
     print "*** 205 start"
     with open('forms/ics205.json') as data_file:    
