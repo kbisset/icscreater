@@ -1,3 +1,4 @@
+#!/usr/bin/python
 #!/opt/local/bin/python2.7
 # Source: https://gist.github.com/tliron/8e9757180506f25e46d9
 
@@ -29,6 +30,7 @@ Create the file web/index.html if you'd like to test serving static files. It wi
 '''
 
 import sys, os, re, shutil, json, urllib, urllib2, BaseHTTPServer
+import platform
 import fillicspdf
 
 # Fix issues with decoding HTTP responses
@@ -49,11 +51,18 @@ def get_record(handler):
 def set_record(handler):
     key = urllib.unquote(handler.path[8:])
     payload = handler.get_payload()
-    print "Payload: ", payload
+    #print "Payload: ", payload
+    filename = "IAP-"+payload['200_incident_name'] \
+               + '-op' + payload['200_operational_period'] \
+               + '-' + re.sub(r'/', '_', payload['200_op_start_date']) \
+               + '.pdf'
     records[key] = payload
-    fillicspdf.create_pdf(payload)
+    fillicspdf.fill_pdf(payload, filename)
     # return records[key]
-    return 42
+    url = 'http://' + 'jarvis.ubercam.net' + ':48080/'+filename
+    # url = re.sub("\"", "", url)
+    print "URL: ", url
+    return url
 
 def delete_record(handler):
     key = urllib.unquote(handler.path[8:])
@@ -89,9 +98,11 @@ class MethodRequest(urllib2.Request):
 class RESTRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         self.routes = {
-            r'^/$': {'file': 'web/index.html', 'media_type': 'text/html'},
+            #r'^/$': {'file': 'web/index.html', 'media_type': 'text/html'},
             r'^/records$': {'GET': get_records, 'media_type': 'application/json'},
-            r'^/record/': {'GET': get_record, 'PUT': set_record, 'DELETE': delete_record, 'media_type': 'application/json'}}
+            r'^/record/': {'GET': get_record, 'PUT': set_record, 'DELETE': delete_record, 'media_type': 'application/json'},
+            r'^/IAP-\S+.pdf$': {'file': 'IAPs', 'media_type': 'application/pdf'}
+        }
         
         return BaseHTTPServer.BaseHTTPRequestHandler.__init__(self, *args, **kwargs)
     
@@ -132,7 +143,10 @@ class RESTRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 if 'file' in route:
                     if method == 'GET':
                         try:
-                            f = open(os.path.join(here, route['file']))
+                            print "Looking for match"
+                            filename = route['file']+self.path
+                            print "Opening file:", filename
+                            f = open(os.path.join(here, filename))
                             try:
                                 self.send_response(200)
                                 if 'media_type' in route:
@@ -145,6 +159,7 @@ class RESTRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                             self.send_response(404)
                             self.end_headers()
                             self.wfile.write('File not found\n')
+                            print "File not found:", self.path
                     else:
                         self.send_response(405)
                         self.end_headers()
@@ -170,8 +185,11 @@ class RESTRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                     
     
     def get_route(self):
+        print 'get_route:', self.path
         for path, route in self.routes.iteritems():
-            if re.match(path, self.path):
+            print 'Path:', path, 'Route:', route
+            match = re.match(path, self.path)
+            if match:
                 return route
         return None
 
@@ -187,7 +205,7 @@ def rest_server(port):
     http_server.server_close()
 
 def main(argv):
-    rest_server(8080)
+    rest_server(48080)
 
 if __name__ == '__main__':
     main(sys.argv[1:])

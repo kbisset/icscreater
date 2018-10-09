@@ -100,8 +100,12 @@ def custom_ics206(data, fields):
 
 def main(argv):
     with open(argv[0]) as data_file:    
-        data = json.load(data_file)
-    #pprint(data)
+        data = json.load(data_file, 'test2.pdf')
+    fill_pdf(data)
+
+def fill_pdf(data, filename):
+        #pprint(data)
+    print "Writing pdf to:", filename
     writer = pdfrw.PdfWriter()
 
     # TODO: Pass in page number so it can be added automatically
@@ -153,7 +157,7 @@ def main(argv):
     writer.addpage(ics207)
 
     #writer.write('test2.pdf', first_page)
-    writer.write('test2.pdf')
+    writer.write('IAPs/'+filename)
 
 
 if __name__ == '__main__':
