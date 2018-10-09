@@ -1,4 +1,4 @@
-#!/opt/local/bin/python2.7
+#!/opt/local/bin/python3.7
 # This Python file uses the following encoding: utf-8
 import io, sys
 import pdfrw
@@ -23,15 +23,15 @@ from pprint import pprint
 def create_pdf(data, fields, page):
     for field in page.Annots:
         if field.T != None:
-            if field.T in fields and fields[unicode(field.T, "utf-8")] in data:
-                if field.AS != None and data[fields[unicode(field.T, "utf-8")]] == 'TRUE':
-                    print "Checkbox: ", field.T, field.V, field.AS
+            if field.T in fields and fields[field.T] in data:
+                if field.AS != None and data[fields[field.T]] == 'TRUE':
+                    print("Checkbox: ", field.T, field.V, field.AS)
                     field.update(pdfrw.PdfDict(AS='Yes'))
                     field.update(pdfrw.PdfDict(V='Yes'))
                 else:
-                    field.update(pdfrw.PdfDict(V=data[fields[unicode(field.T, "utf-8")]]))
+                    field.update(pdfrw.PdfDict(V=data[fields[field.T]]))
             else:
-                print "Not found: '" + field.T + "'"
+                print("Not found: '" + field.T + "'")
             # pprint(field.T)
     return page
 
@@ -105,7 +105,7 @@ def main(argv):
 
 def fill_pdf(data, filename):
         #pprint(data)
-    print "Writing pdf to:", filename
+    print("Writing pdf to:", filename)
     writer = pdfrw.PdfWriter()
 
     # TODO: Pass in page number so it can be added automatically
@@ -117,31 +117,31 @@ def fill_pdf(data, filename):
     custom_ics202(data, ics202_map)
     ics202 = create_pdf(data, ics202_map, first_page.Root.Pages.Kids[0])
     writer.addpage(ics202)
-    print first_page.numPages
-    print "*** 203 start"
+    print(first_page.numPages)
+    print("*** 203 start")
     with open('forms/ics203.json') as data_file:    
         ics203_map = json.load(data_file)
     template = pdfrw.PdfReader('forms/ics203.pdf')
     ics203 = create_pdf(data, ics203_map, template.Root.Pages.Kids[0])
     writer.addpage(ics203)
     first_page.Root.Pages.Kids.append(ics203)
-    print first_page.numPages
+    print(first_page.numPages)
     
-    print "*** 205 start"
+    print("*** 205 start")
     with open('forms/ics205.json') as data_file:    
         ics205_map = json.load(data_file)
     template = pdfrw.PdfReader('forms/ics205-0.pdf')
     ics205 = create_pdf(data, ics205_map, template.Root.Pages.Kids[0])
     writer.addpage(ics205)
 
-    print "*** 205a start"
+    print("*** 205a start")
     with open('forms/ics205a.json') as data_file:    
         ics205a_map = json.load(data_file)
     template = pdfrw.PdfReader('forms/ics205a.pdf')
     ics205a = create_pdf(data, ics205a_map, template.Root.Pages.Kids[0])
     writer.addpage(ics205a)
 
-    print "*** 206 start"
+    print("*** 206 start")
     with open('forms/ics206.json') as data_file:    
         ics206_map = json.load(data_file)
     custom_ics206(data, ics206_map)
@@ -149,7 +149,7 @@ def fill_pdf(data, filename):
     ics206 = create_pdf(data, ics206_map, template.Root.Pages.Kids[0])
     writer.addpage(ics206)
 
-    print "*** 207 start"
+    print("*** 207 start")
     with open('forms/ics207.json') as data_file:    
         ics207_map = json.load(data_file)
     template = pdfrw.PdfReader('forms/ics207.pdf')
