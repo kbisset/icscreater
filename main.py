@@ -1,5 +1,6 @@
 #!/opt/local/bin/python3.7
-from flask import Flask, request, url_for
+from flask import Flask, url_for
+# from flask import request
 from pprint import pprint
 import fillicspdf
 import re
@@ -23,7 +24,7 @@ def fillpdf():
     return url
 
 @app.route('/', methods = ['PUT', 'POST'])
-def hello():
+def hello(request):
     print(request.headers, file=open("server.log", "a"))
     return 'Hello World! ('+request.json['name']+')'
 
