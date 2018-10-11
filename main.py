@@ -11,17 +11,21 @@ import re
 
 
 def fillpdf(request):
-    payload = request.json
-    # filename = "IAP-"+payload['200_incident_name'] \
-    #            + '-op' + payload['200_operational_period'] \
-    #            + '-' + re.sub(r'/', '_', payload['200_op_start_date']) \
-    #            + '.pdf'
-    filename = 'test'
-    print("Filename: ", filename)
+    print("Fillpdf")
+    try:
+        payload = request.json
+        # filename = "IAP-"+payload['200_incident_name'] \
+            #            + '-op' + payload['200_operational_period'] \
+            #            + '-' + re.sub(r'/', '_', payload['200_op_start_date']) \
+            #            + '.pdf'
+        filename = 'test'
+        print("Filename: ", filename)
 
-    # fillicspdf.fill_pdf(payload, filename)
-    url = request.url_root+'IAPs/'+filename
-    print("URL: ", url)
+        # fillicspdf.fill_pdf(payload, filename)
+        url = request.url_root+'IAPs/'+filename
+        print("URL: ", url)
+    except Exception as e:
+        print("Failure:", e)
     return url
 
 def hello_world(request):
