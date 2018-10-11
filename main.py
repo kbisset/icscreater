@@ -2,7 +2,7 @@
 #from flask import Flask, url_for
 # from flask import request
 from pprint import pprint
-#import fillicspdf
+import fillicspdf
 import re
 
 # If `entrypoint` is not defined in app.yaml, App Engine will look for an app
@@ -14,7 +14,10 @@ def fillpdf(request):
     print("Fillpdf")
     try:
         payload = request.json
-        filename = 'test'
+        filename = "IAP-"+payload['200_incident_name'] \
+            + '-op' + payload['200_operational_period'] \
+            + '-' + re.sub(r'/', '_', payload['200_op_start_date']) \
+            + '.pdf'
         print("Filename: ", filename)
 
         # fillicspdf.fill_pdf(payload, filename)
