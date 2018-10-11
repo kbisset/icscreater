@@ -10,17 +10,18 @@ import re
 #app = Flask(__name__)
 
 
-# def fillpdf():
-#     payload = request.json
-#     filename = "IAP-"+payload['200_incident_name'] \
-#                + '-op' + payload['200_operational_period'] \
-#                + '-' + re.sub(r'/', '_', payload['200_op_start_date']) \
-#                + '.pdf'
+def fillpdf(request):
+    payload = request.json
+    filename = "IAP-"+payload['200_incident_name'] \
+               + '-op' + payload['200_operational_period'] \
+               + '-' + re.sub(r'/', '_', payload['200_op_start_date']) \
+               + '.pdf'
+    print("Filename: ", filename)
 
-#     fillicspdf.fill_pdf(payload, filename)
-
-#     url = request.url_root+'IAPs/'+filename
-#     return url
+    # fillicspdf.fill_pdf(payload, filename)
+    url = request.url_root+'IAPs/'+filename
+    print("URL: ", url)
+    return url
 
 def hello_world(request):
     """Responds to any HTTP request.
@@ -39,9 +40,9 @@ def hello_world(request):
     else:
         return f'Hello World!'
 
-# def hello(request):
-#     print(request.headers, file=open("server.log", "a"))
-#     return 'Hello World! ('+request.json['name']+')'
+def hello(request):
+    print(request.headers, file=open("server.log", "a"))
+    return 'Hello World! ('+request.json['name']+')'
 
 
 # if __name__ == '__main__':
