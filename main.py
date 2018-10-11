@@ -23,9 +23,10 @@ def fillpdf(request):
         # fillicspdf.fill_pdf(payload, filename)
         url = request.url_root+'IAPs/'+filename
         print("URL: ", url)
+        return url
     except Exception as e:
         print("Failure:", e)
-    return url
+        return "Failure "+e
 
 def hello_world(request):
     """Responds to any HTTP request.
