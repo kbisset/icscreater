@@ -12,10 +12,11 @@ import re
 
 def fillpdf(request):
     payload = request.json
-    filename = "IAP-"+payload['200_incident_name'] \
-               + '-op' + payload['200_operational_period'] \
-               + '-' + re.sub(r'/', '_', payload['200_op_start_date']) \
-               + '.pdf'
+    # filename = "IAP-"+payload['200_incident_name'] \
+    #            + '-op' + payload['200_operational_period'] \
+    #            + '-' + re.sub(r'/', '_', payload['200_op_start_date']) \
+    #            + '.pdf'
+    filename = 'test'
     print("Filename: ", filename)
 
     # fillicspdf.fill_pdf(payload, filename)
