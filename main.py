@@ -11,7 +11,8 @@ import re
 
 
 def fillpdf(request):
-    print("Fillpdf")
+    print("Fillpdf 2")
+    url = "empty"
     try:
         payload = request.json
         filename = "IAP-"+payload['200_incident_name'] \
