@@ -4,6 +4,9 @@ import io, sys
 import pdfrw
 import json
 from pprint import pprint
+from google.cloud import storage
+
+#import gcp_storage
 
 # from reportlab.lib.utils import ImageReader
 # from reportlab.pdfgen.canvas import Canvas
@@ -108,57 +111,66 @@ def fill_pdf(data, filename):
     print("Writing pdf to:", filename)
     writer = pdfrw.PdfWriter()
 
+    forms = ['ics202', 'ics203', 'ics205', 'ics205a', 'ics206', 'ics207']
     # TODO: Pass in page number so it can be added automatically
-    #print "*** 202 start"
-    with open('forms/ics202.json') as data_file:    
-        ics202_map = json.load(data_file)
-        # need to do this differently to capture defs to make checkboxes work
-    first_page = pdfrw.PdfReader('forms/ics202-0.pdf')
-    custom_ics202(data, ics202_map)
-    ics202 = create_pdf(data, ics202_map, first_page.Root.Pages.Kids[0])
-    writer.addpage(ics202)
-    print(first_page.numPages)
-    print("*** 203 start")
-    with open('forms/ics203.json') as data_file:    
-        ics203_map = json.load(data_file)
-    template = pdfrw.PdfReader('forms/ics203.pdf')
-    ics203 = create_pdf(data, ics203_map, template.Root.Pages.Kids[0])
-    writer.addpage(ics203)
-    first_page.Root.Pages.Kids.append(ics203)
-    print(first_page.numPages)
+    for form in forms:
+        print("Filling ", form)
+        ics_map = get_field_map(form)
+        pdf = get_pdf(form)
+        page = create_pdf(data, ics_map, pdf.Root.Pages.Kids[0])
+        writer.addpage(page)
+        
+    url = put_pdf(writer, 'IAPs/'+filename)
+    return url
+
+def get_field_map(form):
+    print('Getting map for', form)
+    storage_client = storage.Client()
+    bucket_name = 'krb-dev.appspot.com'
+    bucket = storage_client.get_bucket(bucket_name)
+    blobname = 'forms/'+form+'.json'
+    blob = bucket.get_blob(blobname)
+    data = blob.download_as_string()
+    field_map = json.loads(data)
+    print('Done Getting map for', form)
+    return field_map
     
-    print("*** 205 start")
-    with open('forms/ics205.json') as data_file:    
-        ics205_map = json.load(data_file)
-    template = pdfrw.PdfReader('forms/ics205-0.pdf')
-    ics205 = create_pdf(data, ics205_map, template.Root.Pages.Kids[0])
-    writer.addpage(ics205)
+def get_pdf(form):
+    print('Getting pdf for', form)
+    storage_client = storage.Client()
+    bucket_name = 'krb-dev.appspot.com'
+    bucket = storage_client.get_bucket(bucket_name)
+    blobname = 'forms/'+form+'.pdf'
+    #print("blob", blobname)
+    blob = bucket.get_blob(blobname)
+    #print("got blob", blob.id)
+    data = blob.download_as_string()
+    #print("blob size", data.len)
+    page = pdfrw.PdfReader(fdata=data)
+    print('Done Getting pdf for', form)
+    return page
 
-    print("*** 205a start")
-    with open('forms/ics205a.json') as data_file:    
-        ics205a_map = json.load(data_file)
-    template = pdfrw.PdfReader('forms/ics205a.pdf')
-    ics205a = create_pdf(data, ics205a_map, template.Root.Pages.Kids[0])
-    writer.addpage(ics205a)
 
-    print("*** 206 start")
-    with open('forms/ics206.json') as data_file:    
-        ics206_map = json.load(data_file)
-    custom_ics206(data, ics206_map)
-    template = pdfrw.PdfReader('forms/ics206-0.pdf')
-    ics206 = create_pdf(data, ics206_map, template.Root.Pages.Kids[0])
-    writer.addpage(ics206)
-
-    print("*** 207 start")
-    with open('forms/ics207.json') as data_file:    
-        ics207_map = json.load(data_file)
-    template = pdfrw.PdfReader('forms/ics207.pdf')
-    ics207 = create_pdf(data, ics207_map, template.Root.Pages.Kids[0])
-    writer.addpage(ics207)
-
-    #writer.write('test2.pdf', first_page)
-    writer.write('IAPs/'+filename)
+def put_pdf(writer, blobname):
+    print('Storing', blobname)
+    storage_client = storage.Client()
+    bucket_name = 'krb-dev.appspot.com'
+    bucket = storage_client.get_bucket(bucket_name)
+    filename = '/tmp/'+str(hash(blobname))
+    #print("Writing pdf to", filename)
+    writer.write(filename)
+    #print("getting blob", blobname)
+    blob = bucket.blob(blobname)
+    #print("uploading blob", blobname)
+    blob.upload_from_filename(filename, content_type='application/pdf')
+    #print("making public")
+    blob.make_public()
+    #print("getting url", blobname)
+    url = blob.public_url
+    print('Stored', blobname, 'to', url)
+    return url
 
 
 if __name__ == '__main__':
     main(sys.argv[1:])
+

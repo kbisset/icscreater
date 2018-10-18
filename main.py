@@ -11,7 +11,7 @@ import re
 
 
 def fillpdf(request):
-    print("Fillpdf 2")
+    print("Fillpdf")
     url = "empty"
     try:
         payload = request.json
@@ -21,13 +21,12 @@ def fillpdf(request):
             + '.pdf'
         print("Filename: ", filename)
 
-        # fillicspdf.fill_pdf(payload, filename)
-        url = request.url_root+'IAPs/'+filename
+        url = fillicspdf.fill_pdf(payload, filename)
         print("URL: ", url)
         return url
     except Exception as e:
         print("Failure:", e)
-        return "Failure "+e
+        return "Failure"
 
 def hello_world(request):
     """Responds to any HTTP request.
@@ -49,7 +48,6 @@ def hello_world(request):
 def hello(request):
     print(request.headers, file=open("server.log", "a"))
     return 'Hello World! ('+request.json['name']+')'
-
 
 # if __name__ == '__main__':
 #     # This is used when running locally only. When deploying to Google App
