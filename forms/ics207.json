@@ -5,6 +5,7 @@
     "(Time From)": "200_op_start_time",
     "(Time To)": "200_op_end_time",
     "(Op Period)": "200_operational_period",
+    "(Metadata)": "metadata",
 "(Incident Commanders_2)": "203_ic_1",
 "(Liaison Officer_3)": "203_ic_liason",
 "(Safety Officer_4)": "203_ic_safety",

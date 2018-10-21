@@ -5,6 +5,7 @@
     "(Time From)": "200_op_start_time",
     "(Time To)": "200_op_end_time",
     "(Op Period)": "200_operational_period",
+    "(Metadata)": "metadata",
     "(8 Approved by Incident Commander Name)": "blank",
     "(DateTime_5)": "blank",
     "(7 Prepared by Name)": "202_prepared_by_name",

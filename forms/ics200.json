@@ -11,5 +11,6 @@
     "(Incident Location)": "200_incident_location",
     "(Location UTM)": "200_incident_utm",
     "(Location LatLong)": "200_incident_latlong",
-    "(Location Address)": "200_incident_address"
+    "(Location Address)": "200_incident_address",
+    "(Metadata)": "metadata"
 }

@@ -5,6 +5,7 @@
     "(Time From)": "200_op_start_time",
     "(Time To)": "200_op_end_time",
     "(Op Period)": "200_operational_period",
+    "(Metadata)": "metadata",
     "(4 Prepared by Name)": "205a_prepared_by_name",
     "(PositionTitle_8)": "205a_prepared_by_title",
     "(IAP Page_5)": "pagenum",

@@ -104,7 +104,6 @@ def custom_ics206(data, fields):
     set_stupid_checkboxes_trauma(data, u'206_hospital_trauma_level_5')
 
 def fill_pdf(data, filename):
-        #pprint(data)
     print("Writing pdf to:", filename)
     writer = pdfrw.PdfWriter()
 
@@ -113,7 +112,12 @@ def fill_pdf(data, filename):
     pagenum=0
     dt = datetime.now().strftime("%Y-%m-%d %H:%m")
     data['prepared_datetime'] = dt
-    # TODO: Pass in page number so it can be added automatically
+    # metadata - IAP-name-op_period_start_date_time
+    dt = datetime.now().strftime("%Y-%m-%d %H:%m:%S")
+    metadata = ( "IAP-" + data['200_incident_name']
+                 + "-OP" + data['200_op_num']
+                 + "-" + dt)
+    data['metadata'] = metadata
     for form in forms:
         print("Filling ", form)
         ics_map = get_field_map(form)
