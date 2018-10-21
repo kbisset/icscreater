@@ -4,6 +4,7 @@
     "(Date To)": "200_op_end_date",
     "(Time From)": "200_op_start_time",
     "(Time To)": "200_op_end_time",
+    "(Op Period)": "200_operational_period",
     "(7 Prepared by Medical Unit Leader Name)": "206_prepared_by_name",
     "(8 Approved by Safety Officer Name)": "blank",
     "(IAP Page_6)": "pagenum",

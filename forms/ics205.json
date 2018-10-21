@@ -4,6 +4,7 @@
     "(Date To)": "200_op_end_date",
     "(Time From)": "200_op_start_time",
     "(Time To)": "200_op_end_time",
+    "(Op Period)": "200_operational_period",
     "(6 Prepared by Communications Unit Leader Name)": "205_prepared_name",
     "(PositionTitle_5)": "205_prepared_by_title",
     "(DateTime_8)": "prepared_datetime",

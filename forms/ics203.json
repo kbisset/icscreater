@@ -4,6 +4,7 @@
     "(Date To)": "200_op_end_date",
     "(Time From)": "200_op_start_time",
     "(Time To)": "200_op_end_time",
+    "(Op Period)": "200_operational_period",
     "(9 Prepared by Name)": "203_prepared_by_name",
     "(PositionTitle_6)": "203_prepared_by_title",
 "(ICUCs)": "203_ic_1",

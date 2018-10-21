@@ -108,8 +108,9 @@ def fill_pdf(data, filename):
     print("Writing pdf to:", filename)
     writer = pdfrw.PdfWriter()
 
-    forms = ['ics202', 'ics203', 'ics205', 'ics205a', 'ics206', 'ics207']
-    pagenum=1
+    forms = ['ics200', 'ics202', 'ics203', 'ics205', 'ics205a', 'ics206', 'ics207']
+    # Coversheet is unnumbered, so this will number 202 as page 1
+    pagenum=0
     dt = datetime.now().strftime("%Y-%m-%d %H:%m")
     data['prepared_datetime'] = dt
     # TODO: Pass in page number so it can be added automatically
