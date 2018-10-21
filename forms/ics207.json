@@ -35,8 +35,8 @@
 "(Comms Unit Ldr)": "203_service_comms",
 "(Medical Unit Ldr)": "203_service_medical",
 "(Food Unit Ldr)": "203_service_food",
-"(IAP Page_6)": "blank",
+"(IAP Page_6)": "pagenum",
 "(4 Prepared by Name_2)": "203_prepared_by_name",
 "(PositionTitle_9)": "203_prepared_by_title",
-"(DateTime_11)": "blank"
+"(DateTime_11)": "prepared_datetime"
 }

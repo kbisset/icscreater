@@ -112,6 +112,6 @@
 "(Finance/Adminsitration Section Procurement Unit)": "203_fin_procurement",
 "(Finance/Adminsitration Section CompClaims Unit)": "203_fin_comp",
 "(Finance/Adminsitration Section Cost Unit)": "203_fin_cost",
-"(IAP Page_2)": "blank",
-"(DateTime_6)": "blank"
+"(IAP Page_2)": "pagenum",
+"(DateTime_6)": "prepared_datetime"
 }

@@ -5,7 +5,9 @@ import pdfrw
 import json
 from pprint import pprint
 from google.cloud import storage
+from datetime import datetime
 
+local=False
 #import gcp_storage
 
 # from reportlab.lib.utils import ImageReader
@@ -28,14 +30,14 @@ def create_pdf(data, fields, page):
         if field.T != None:
             if field.T in fields and fields[field.T] in data:
                 if field.AS != None and data[fields[field.T]] == 'TRUE':
-                    print("Checkbox: ", field.T, field.V, field.AS)
+#                    print("Checkbox: ", field.T, field.V, field.AS)
                     field.update(pdfrw.PdfDict(AS='Yes'))
                     field.update(pdfrw.PdfDict(V='Yes'))
                 else:
                     field.update(pdfrw.PdfDict(V=data[fields[field.T]]))
+#                    print("Update: ", field.T, field.V, field.AS, fields[field.T], data[fields[field.T]])
             else:
                 print("Not found: '" + field.T + "'")
-            # pprint(field.T)
     return page
 
 def set_stupid_checkboxes(data, name):
@@ -101,76 +103,95 @@ def custom_ics206(data, fields):
     set_stupid_checkboxes_trauma(data, u'206_hospital_trauma_level_4')
     set_stupid_checkboxes_trauma(data, u'206_hospital_trauma_level_5')
 
-def main(argv):
-    with open(argv[0]) as data_file:    
-        data = json.load(data_file, 'test2.pdf')
-    fill_pdf(data)
-
 def fill_pdf(data, filename):
         #pprint(data)
     print("Writing pdf to:", filename)
     writer = pdfrw.PdfWriter()
 
     forms = ['ics202', 'ics203', 'ics205', 'ics205a', 'ics206', 'ics207']
+    pagenum=1
+    dt = datetime.now().strftime("%Y-%m-%d %H:%m")
+    data['prepared_datetime'] = dt
     # TODO: Pass in page number so it can be added automatically
     for form in forms:
         print("Filling ", form)
         ics_map = get_field_map(form)
         pdf = get_pdf(form)
+        data['pagenum'] = str(pagenum)
         page = create_pdf(data, ics_map, pdf.Root.Pages.Kids[0])
         writer.addpage(page)
+        pagenum += 1
         
     url = put_pdf(writer, 'IAPs/'+filename)
     return url
 
 def get_field_map(form):
     print('Getting map for', form)
-    storage_client = storage.Client()
-    bucket_name = 'krb-dev.appspot.com'
-    bucket = storage_client.get_bucket(bucket_name)
     blobname = 'forms/'+form+'.json'
-    blob = bucket.get_blob(blobname)
-    data = blob.download_as_string()
-    field_map = json.loads(data)
+
+    if not local:
+        storage_client = storage.Client()
+        bucket_name = 'krb-dev.appspot.com'
+        bucket = storage_client.get_bucket(bucket_name)
+        blob = bucket.get_blob(blobname)
+        data = blob.download_as_string()
+        field_map = json.loads(data)
+    else:
+        with open(blobname) as data_file:
+            field_map = json.load(data_file)
+
     print('Done Getting map for', form)
     return field_map
     
 def get_pdf(form):
     print('Getting pdf for', form)
-    storage_client = storage.Client()
-    bucket_name = 'krb-dev.appspot.com'
-    bucket = storage_client.get_bucket(bucket_name)
     blobname = 'forms/'+form+'.pdf'
-    #print("blob", blobname)
-    blob = bucket.get_blob(blobname)
-    #print("got blob", blob.id)
-    data = blob.download_as_string()
-    #print("blob size", data.len)
-    page = pdfrw.PdfReader(fdata=data)
+    if not local:
+        storage_client = storage.Client()
+        bucket_name = 'krb-dev.appspot.com'
+        bucket = storage_client.get_bucket(bucket_name)
+        #print("blob", blobname)
+        blob = bucket.get_blob(blobname)
+        #print("got blob", blob.id)
+        data = blob.download_as_string()
+        #print("blob size", data.len)
+        page = pdfrw.PdfReader(fdata=data)
+    else:
+        page = pdfrw.PdfReader(blobname)
     print('Done Getting pdf for', form)
     return page
 
 
 def put_pdf(writer, blobname):
     print('Storing', blobname)
-    storage_client = storage.Client()
-    bucket_name = 'krb-dev.appspot.com'
-    bucket = storage_client.get_bucket(bucket_name)
-    filename = '/tmp/'+str(hash(blobname))
-    #print("Writing pdf to", filename)
-    writer.write(filename)
-    #print("getting blob", blobname)
-    blob = bucket.blob(blobname)
-    #print("uploading blob", blobname)
-    blob.upload_from_filename(filename, content_type='application/pdf')
-    #print("making public")
-    blob.make_public()
-    #print("getting url", blobname)
-    url = blob.public_url
+    if not local:
+        storage_client = storage.Client()
+        bucket_name = 'krb-dev.appspot.com'
+        bucket = storage_client.get_bucket(bucket_name)
+        filename = '/tmp/'+str(hash(blobname))
+        #print("Writing pdf to", filename)
+        writer.write(filename)
+        #print("getting blob", blobname)
+        blob = bucket.blob(blobname)
+        #print("uploading blob", blobname)
+        blob.upload_from_filename(filename, content_type='application/pdf')
+        #print("making public")
+        blob.make_public()
+        #print("getting url", blobname)
+        url = blob.public_url
+    else:
+        writer.write(blobname)
+        url = 'none'
     print('Stored', blobname, 'to', url)
     return url
 
+def main(argv):
+    print("local", local)
+    with open(argv[0]) as data_file:
+       data = json.load(data_file)
+    fill_pdf(data, 'test2.pdf')
 
 if __name__ == '__main__':
+    local=True
     main(sys.argv[1:])
 

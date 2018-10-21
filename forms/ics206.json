@@ -6,7 +6,7 @@
     "(Time To)": "200_op_end_time",
     "(7 Prepared by Medical Unit Leader Name)": "206_prepared_by_name",
     "(8 Approved by Safety Officer Name)": "blank",
-    "(IAP Page_6)": "blank",
+    "(IAP Page_6)": "pagenum",
     "(DateTime_10)": "blank",
     "(NameRow1)": "206_medical_aid_name_1",
     "(LocationRow1)": "206_medical_aid_location_1",
