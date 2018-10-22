@@ -16,7 +16,7 @@ def fillpdf(request):
     try:
         payload = request.json
         filename = "IAP-"+payload['200_incident_name'] \
-            + '-op' + payload['200_operational_period'] \
+            + '-op' + payload['200_op_num'] \
             + '-' + re.sub(r'/', '_', payload['200_op_start_date']) \
             + '.pdf'
         print("Filename: ", filename)
