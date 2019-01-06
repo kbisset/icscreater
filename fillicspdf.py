@@ -7,6 +7,7 @@ import json
 from pprint import pprint
 from google.cloud import storage
 from datetime import datetime
+import qrcode
 
 # Skip google clound stuff if we are running locally
 local=False
@@ -88,7 +89,7 @@ def custom_ics206(data, fields):
 # PyPDF2 doesn't produce checkboxes that show checks everywhere.
 # Copy all the /Annots from the individual pages to the top level /AcroFrom./Fields
 # /NeedAppearances may not be necessary, but shouldn't hurt
-# This depends on internals of PdfWriter, but there doesn't appear to be a batter way
+# This depends on internals of PdfWriter, but there doesn't appear to be a better way
 def enable_checkboxes(writer):
     # See 12.7.2 and 7.7.2 for more information:
     # http://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/PDF32000_2008.pdf
@@ -132,9 +133,10 @@ def updatePageFormFieldValues(writer, page, fields):
         for field in fields:
             if writer_annot.get('/T') == field:
                 if writer_annot.get('/FT') == '/Btn':
+                    # pprint(writer_annot)
                     if fields[field].lower() == "true" or fields[field].lower() == "yes":
                         writer_annot.update({
-                            NameObject("/V"): PlainTextStringObject('/0')
+                            NameObject("/V"): PlainTextStringObject('/Yes')
                         })
                     else:
                         writer_annot.update({
@@ -149,8 +151,8 @@ def fill_pdf(data, filename):
     print("Writing pdf to:", filename)
     writer = PdfFileWriter()
 
-    forms = ['ics200', 'ics202', 'ics203', 'ics205', 'ics205a', 'ics206', 'ics207', 'ics215a']
-    #forms = ['ics215a']
+    forms = ['ics200', 'ics202', 'ics203', 'ics205', 'ics205a', 'ics206', 'ics206k9', 'ics207', 'ics215a']
+    #forms = ['ics202']
     pagenum=1
     dt = datetime.now().strftime("%Y-%m-%d %H:%m")
     # TODO: Individual prepared dates for each form set whenever a form is changed
@@ -159,7 +161,7 @@ def fill_pdf(data, filename):
     dt = datetime.now().strftime("%Y-%m-%d %H:%m:%S")
     metadata = ( "IAP-" + data['200_incident_name']
                  + "-OP" + data['200_op_num']
-                 + "-" + dt)
+                 + "\nGenerated: " + dt)
     data['metadata'] = metadata
     field_map = {}
     for form in forms:
@@ -195,6 +197,12 @@ def fill_pdf(data, filename):
         
     enable_checkboxes(writer)
     url = put_pdf(writer, 'IAPs/'+filename)
+    # img = qrcode.make('http://www.example.com/'+url)
+    # qrcode_png = io.BytesIO()
+    # img.save(qrcode_png, "png")
+    # imgfile = open("iap.png", "wb")
+    # imgfile.write(qrcode_png.getbuffer())
+    # imgfile.close()
     return url
 
 def get_field_map(form):
